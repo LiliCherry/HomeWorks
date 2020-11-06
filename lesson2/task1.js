@@ -1,6 +1,6 @@
 var a = 'Hello, World!'
 
-for (let i = 0; i < a.length; i++) {
-    var last = a[a.length - i - 1];
+for (let i = a.length - 1; i >= 0; i--) {
+    var last = a[i];
     console.log(last);
 }
