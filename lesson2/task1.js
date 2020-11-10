@@ -1,6 +1,20 @@
-var a = 'Hello, World!'
+var message = 'Hello, World!';
 
-for (let i = a.length - 1; i >= 0; i--) {
-    var last = a[i];
-    console.log(last);
+function main() {
+    var i = message.length - 1;
+    function recursive(a) {
+        if (i >= 0) {
+            var last = a[i];
+            console.log(last);
+            i--;
+            recursive(a);
+        }
+    }
+    recursive(message);
 }
+
+main();
+
+
+
+

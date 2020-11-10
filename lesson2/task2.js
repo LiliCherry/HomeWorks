@@ -1,8 +1,18 @@
 var a = 6;
 var b = 1;
 
-for (let i = 0; i < a; i++) {
-    b *= (a - i);
+function main() {
+    var i = 0;
+    function recursive(a, b) {
+        if (i < a) {
+            b *= (a - i);
+            i++;
+            recursive(a, b);
+        } else {
+            console.log(b);
+        }
+    }
+    recursive(a, b);
 }
 
-console.log(b);
+main();
