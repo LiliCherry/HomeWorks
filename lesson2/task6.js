@@ -1,12 +1,22 @@
-var a = 120;
-var b = 180;
-var c = a + b;
-var d = 0;
+var a = 150;
+var b = 50;
 
-for (let i = 0; i < c; i++) {
-    if ((a % i) === 0 && (b % i) === 0) {
-        d = i + 0;
+function main() {
+    var i = 0;
+    var c = a + b;
+    var d = 0;
+    function logCommonDivider() {
+        if (i < c) {
+            if ((a % i) === 0 && (b % i) === 0) {
+                d = i;
+            }
+            i++;
+            logCommonDivider();
+            return;
+        }
+        console.log(d);
     }
+    logCommonDivider();
 }
 
-console.log(d);
+main();

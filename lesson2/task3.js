@@ -2,13 +2,23 @@ var a = 344;
 var n = 7;
 var counter = 0;
 
-for (let i = 0; i < Number.MAX_VALUE; i++) {
-    var b = a % i;
-    if (b === 0) {
-        console.log(i);
-        counter++;
+function main() {
+    var i = 0;
+    function logDividersRecursive(a, n) {
+        if (i < Number.MAX_VALUE) {
+            var b = a % i;
+            i++;
+            if (b === 0) {
+                console.log(i);
+                counter++;
+            }
+            if (counter === n) {
+                return;
+            }
+            logDividersRecursive(a, n);
+        }
     }
-    if (counter === n) {
-        break;
-    }
+    logDividersRecursive(a, n);
 }
+
+main();
