@@ -16,6 +16,7 @@ function transposeMatrix() {
     }
 
     console.log(transposedMatrix);
+
 }
 
 transposeMatrix();
