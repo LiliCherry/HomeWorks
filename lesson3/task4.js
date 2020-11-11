@@ -10,11 +10,16 @@ var Matrix2 = [
     [2, 1]
 ];
 
-var derivativeMatrix = [[], [], []];
+function deriveMatrix() {
 
-for (let i = 0; i < derivativeMatrix.length; i++) {
-    for (let index = 0; index < Matrix1[0].length; index++) {
-        derivativeMatrix[i].push(Matrix1[i][index] * Matrix2[i][index]);
+    var derivedMatrix = [[], [], []];
+
+    for (let i = 0; i < derivedMatrix.length; i++) {
+        for (let index = 0; index < Matrix1[0].length; index++) {
+            derivativeMatrix[i].push(Matrix1[i][index] * Matrix2[i][index]);
+        }
     }
+    console.log(derivedMatrix);
 }
-console.log(derivativeMatrix);
+
+deriveMatrix();
