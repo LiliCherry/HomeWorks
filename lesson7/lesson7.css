@@ -1,0 +1,19 @@
+#greenBackground {
+    background: #3ea747;
+}
+
+#yellowBackground {
+    background: #efff63;
+}
+
+#redBackground {
+    background: #c53f3f;
+}
+
+#pInTd {
+    margin: 0px 10px;
+}
+
+#invisible {
+    display: none;
+}
