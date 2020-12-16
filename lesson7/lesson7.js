@@ -18,15 +18,15 @@
 // должна быть пересчитана и выведена новая статистика.
 
 var students = [
-    { name: 'Sergii Sirenko', estimate: 4.2, course: 1, active: false },
-    { name: 'Mariia Zirenko', estimate: 5, course: 1, active: true },
-    { name: 'Pavlo Shnurov', estimate: 4.9, course: 1, active: true },
-    { name: 'Andrii Kucherenko', estimate: 3.9, course: 2, active: true },
-    { name: 'Maxim Kucher', estimate: 4.8, course: 2, active: true },
-    { name: 'Antonina Gureeva', estimate: 3.4, course: 3, active: false },
-    { name: 'Leonid Gurchenko', estimate: 4.1, course: 3, active: true },
-    { name: 'Ivan Petrenko', estimate: 3.5, course: 4, active: false },
-    { name: 'Regina Petrenko', estimate: 2.8, course: 4, active: false }
+    { name: 'Sergii Sirenko', estimate: 4.2, course: 1, active: false, email: 'sergiisirenko@gmail.com' },
+    { name: 'Mariia Zirenko', estimate: 5, course: 1, active: true, email: 'mariiazirenko@gmail.com' },
+    { name: 'Pavlo Shnurov', estimate: 4.9, course: 1, active: true, email: 'pavloshnurov@gmail.com' },
+    { name: 'Andrii Kucherenko', estimate: 3.9, course: 2, active: true, email: 'andriikucherenko@gmail.com' },
+    { name: 'Maxim Kucher', estimate: 4.8, course: 2, active: true, email: 'maximkucher@gmail.com' },
+    { name: 'Antonina Gureeva', estimate: 3.4, course: 3, active: false, email: 'antoninagureeva@gmail.com' },
+    { name: 'Leonid Gurchenko', estimate: 4.1, course: 3, active: true, email: 'leonidgurchenko@gmail.com' },
+    { name: 'Ivan Petrenko', estimate: 3.5, course: 4, active: false, email: 'ivanpetrenko@gmail.com' },
+    { name: 'Regina Petrenko', estimate: 2.8, course: 4, active: false, email: 'reginapetrenko@gmail.com' }
 ];
 
 var studentEstimatesSumm = 0;
@@ -139,6 +139,24 @@ calculateAverageStudentsEstimateInCourse();
 
 var averageStudentsEsimate = studentEstimatesSumm / summActiveStudents;
 
+function isValidEmail(email) {
+    let result = /^([a-z0-9_-]+\.)*[a-z0-9_-]+@[a-z0-9_-]+(\.[a-z0-9_-]+)*\.[a-z]{2,6}$/.test(email);
+    console.log(result);
+    return result;
+}
+
+function isValidCourse(course) {
+    let result = /^[1-5]$/.test(course);
+    console.log(result);
+    return result;
+}
+
+function isValidName(name) {
+    let result = /^[a-zA-Z]{1,15}\s[a-zA-Z]{1,15}$/.test(name);
+    console.log(result);
+    return result;
+}
+
 function addTableAverageEstimate() {
     let averageEstimate = Object.values(averageStudentsEstimateInCourse);
     let table = document.createElement('TABLE');
@@ -217,6 +235,11 @@ function renderStudents() {
         let course = document.createElement('P');
         course.setAttribute('id', 'pInTd');
         course.innerHTML = students[i].course;
+
+        let tdForEmail = document.createElement('TD');
+        let email = document.createElement('P');
+        email.setAttribute('id', 'pInTd');
+        email.innerHTML = students[i].email;
 
         let iconPlus = document.createElement("IMG");
         iconPlus.setAttribute("width", "20");
@@ -305,9 +328,25 @@ function renderStudents() {
                         if (event.keyCode === 13) {
                             let newName = document.getElementsByTagName('input')[0].value;
                             students[i].name = newName;
-                            name.innerHTML = `${newName}`;
+
+                            let resultValidation = isValidName(newName);
+
+                            if (resultValidation) {
+                                name.innerHTML = `${newName}`;
+
+                                clear();
+
+                                calculateSummInactiveStudentsInCourses();
+                                calculateAverageStudentsEstimateInCourse();
+
+                                renderStudents();
+                                addTableAverageEstimate();
+                                addTableInActiveStudents();
+                            } else {
+                                name.innerHTML = 'Введите имя и фамилию латинскими буквами через пробел';
+                            }
+
                             inputName.setAttribute('id', 'invisible');
-                            renderStudents();
                         }
                     });
                 })(i);
@@ -349,27 +388,75 @@ function renderStudents() {
             course.addEventListener('click', function (event) {
                 course.innerHTML = '';
 
-                let inputName = document.createElement('INPUT');
+                let inputCourse = document.createElement('INPUT');
 
-                tdForCourse.appendChild(inputName);
+                tdForCourse.appendChild(inputCourse);
 
-                inputName.setAttribute('id', 'inputName');
+                inputCourse.setAttribute('id', 'inputCourse');
 
                 (function (i) {
-                    inputName.addEventListener('keyup', function (event) {
+                    inputCourse.addEventListener('keyup', function (event) {
                         if (event.keyCode === 13) {
-                            let newName = document.getElementsByTagName('input')[0].value;
-                            students[i].course = parseInt(newName);
-                            course.innerHTML = `${newName}`;
-                            inputName.setAttribute('id', 'invisible');
-                            clear();
+                            let newCourse = document.getElementsByTagName('input')[0].value;
+                            students[i].course = parseInt(newCourse);
 
-                            calculateSummInactiveStudentsInCourses();
-                            calculateAverageStudentsEstimateInCourse();
+                            let resultValidation = isValidCourse(newCourse);
 
-                            renderStudents();
-                            addTableAverageEstimate();
-                            addTableInActiveStudents();
+                            if (resultValidation) {
+                                course.innerHTML = `${newCourse}`;
+
+                                clear();
+
+                                calculateSummInactiveStudentsInCourses();
+                                calculateAverageStudentsEstimateInCourse();
+
+                                renderStudents();
+                                addTableAverageEstimate();
+                                addTableInActiveStudents();
+                            } else {
+                                course.innerHTML = 'Введите число от 1 до 5';
+                            }
+
+                            inputCourse.setAttribute('id', 'invisible');
+                        }
+                    });
+                })(i);
+            });
+        })(i);
+
+        (function (i) {
+            email.addEventListener('click', function (event) {
+                email.innerHTML = '';
+
+                let inputEmail = document.createElement('INPUT');
+
+                tdForEmail.appendChild(inputEmail);
+
+                inputEmail.setAttribute('id', 'inputEmail');
+
+                (function (i) {
+                    inputEmail.addEventListener('keyup', function (event) {
+                        if (event.keyCode === 13) {
+                            let newEmail = document.getElementsByTagName('input')[0].value;
+                            students[i].email = newEmail;
+
+                            let resultValidation = isValidEmail(newEmail);
+
+                            if (resultValidation) {
+                                email.innerHTML = `${newEmail}`;
+                                clear();
+
+                                calculateSummInactiveStudentsInCourses();
+                                calculateAverageStudentsEstimateInCourse();
+
+                                renderStudents();
+                                addTableAverageEstimate();
+                                addTableInActiveStudents();
+                            } else {
+                                email.innerHTML = 'Неверный формат e-mail';
+                            }
+
+                            inputEmail.setAttribute('id', 'invisible');
                         }
                     });
                 })(i);
@@ -391,6 +478,10 @@ function renderStudents() {
         tr.appendChild(tdForCourse);
 
         tdForCourse.appendChild(course);
+
+        tr.appendChild(tdForEmail);
+
+        tdForEmail.appendChild(email);
 
         tr.appendChild(iconPlus);
     }
