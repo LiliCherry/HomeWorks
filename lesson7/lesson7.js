@@ -18,15 +18,15 @@
 // должна быть пересчитана и выведена новая статистика.
 
 var students = [
-    { name: 'Sergii Sirenko', estimate: 4.2, course: 1, active: false, email: 'sergiisirenko@gmail.com' },
-    { name: 'Mariia Zirenko', estimate: 5, course: 1, active: true, email: 'mariiazirenko@gmail.com' },
-    { name: 'Pavlo Shnurov', estimate: 4.9, course: 1, active: true, email: 'pavloshnurov@gmail.com' },
-    { name: 'Andrii Kucherenko', estimate: 3.9, course: 2, active: true, email: 'andriikucherenko@gmail.com' },
-    { name: 'Maxim Kucher', estimate: 4.8, course: 2, active: true, email: 'maximkucher@gmail.com' },
-    { name: 'Antonina Gureeva', estimate: 3.4, course: 3, active: false, email: 'antoninagureeva@gmail.com' },
-    { name: 'Leonid Gurchenko', estimate: 4.1, course: 3, active: true, email: 'leonidgurchenko@gmail.com' },
-    { name: 'Ivan Petrenko', estimate: 3.5, course: 4, active: false, email: 'ivanpetrenko@gmail.com' },
-    { name: 'Regina Petrenko', estimate: 2.8, course: 4, active: false, email: 'reginapetrenko@gmail.com' }
+    { name: 'Sergii Sirenko', estimate: 4.2, course: 1, active: false, email: 'sergiisirenko@gmail.com', date: 'Wed Dec 16 2020 09:17' },
+    { name: 'Mariia Zirenko', estimate: 5, course: 1, active: true, email: 'mariiazirenko@gmail.com', date: 'Wed Dec 16 2020 10:18' },
+    { name: 'Pavlo Shnurov', estimate: 4.9, course: 1, active: true, email: 'pavloshnurov@gmail.com', date: 'Wed Dec 16 2020 11:19' },
+    { name: 'Andrii Kucherenko', estimate: 3.9, course: 2, active: true, email: 'andriikucherenko@gmail.com', date: 'Wed Dec 16 2020 12:20' },
+    { name: 'Maxim Kucher', estimate: 4.8, course: 2, active: true, email: 'maximkucher@gmail.com', date: 'Wed Dec 16 2020 13:21' },
+    { name: 'Antonina Gureeva', estimate: 3.4, course: 3, active: false, email: 'antoninagureeva@gmail.com', date: 'Wed Dec 16 2020 14:22' },
+    { name: 'Leonid Gurchenko', estimate: 4.1, course: 3, active: true, email: 'leonidgurchenko@gmail.com', date: 'Wed Dec 16 2020 15:23' },
+    { name: 'Ivan Petrenko', estimate: 3.5, course: 4, active: false, email: 'ivanpetrenko@gmail.com', date: 'Wed Dec 16 2020 16:24' },
+    { name: 'Regina Petrenko', estimate: 2.8, course: 4, active: false, email: 'reginapetrenko@gmail.com', date: 'Wed Dec 16 2020 17:25' }
 ];
 
 var studentEstimatesSumm = 0;
@@ -240,6 +240,11 @@ function renderStudents() {
         let email = document.createElement('P');
         email.setAttribute('id', 'pInTd');
         email.innerHTML = students[i].email;
+
+        let tdForDate = document.createElement('TD');
+        let date = document.createElement('P');
+        date.setAttribute('id', 'pInTd');
+        date.innerHTML = students[i].date;
 
         let iconPlus = document.createElement("IMG");
         iconPlus.setAttribute("width", "20");
@@ -483,6 +488,10 @@ function renderStudents() {
 
         tdForEmail.appendChild(email);
 
+        tr.appendChild(tdForDate);
+
+        tdForDate.appendChild(date);
+
         tr.appendChild(iconPlus);
     }
     let list = document.querySelector('.listStudents');
@@ -543,20 +552,44 @@ function addedNewStudents() {
 
         var checkedCheckbox = document.getElementById('checkbox').checked;
 
-        let newStudent = { name: inputValueName, estimate: parseInt(inputValueEstimate), course: parseInt(inputValueCourse), active: checkedCheckbox };
+        let resultValidationName = isValidName(inputValueName);
 
-        students.push(newStudent);
+        let resultValidationCourse = isValidCourse(inputValueCourse);
 
-        console.log(students);
+        let resultValidationEstimate = isValidCourse(inputValueEstimate);
 
-        clear();
+        if (resultValidationName && resultValidationCourse && resultValidationEstimate) {
+            let newStudent = {
+                name: inputValueName, estimate: parseInt(inputValueEstimate),
+                course: parseInt(inputValueCourse), active: checkedCheckbox,
+                email: '', date: new Date()
+            };
 
-        calculateSummInactiveStudentsInCourses();
-        calculateAverageStudentsEstimateInCourse();
+            students.push(newStudent);
 
-        renderStudents();
-        addTableAverageEstimate();
-        addTableInActiveStudents();
+            console.log(students);
+
+            clear();
+
+            calculateSummInactiveStudentsInCourses();
+            calculateAverageStudentsEstimateInCourse();
+
+            renderStudents();
+            addTableAverageEstimate();
+            addTableInActiveStudents();
+        } else {
+            if (!resultValidationName) {
+                alert('Введите имя и фамилию латинскими буквами через пробел');
+            }
+
+            if (!resultValidationCourse) {
+                alert('Введите курс одним числом от 1 до 5');
+            }
+
+            if (!resultValidationEstimate) {
+                alert('Введите оценку одним числом от 1 до 5');
+            }
+        }
     });
 }
 
