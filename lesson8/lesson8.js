@@ -1,30 +1,36 @@
-// Урок седьмой
-// - При каждом действии удаления или добавления студентов нужно
-// пересчитывать статистику средней оценки в разрезе каждого курса и подсчета
-// количества неактивных студентов и изменять соответствующее содержимое.
-// - В ряде предыдущих заданий - выделять красным цветом тех студентов которые
-// имеют оценку 3 и менее. которые от 3 до 4 - желтым и которые 4 и выше -
-// зеленым.
-// - Аналогично как в предыдущем задании этого урока отмечать фоновым цветом
-// вывод статистики в разрезе каждого курса касательно средней оценки
-// - Добавить для каждого студента иконку по нажатию на которую студент
-// переводится в статус неактивный из активного и наоборот - при этом для двух
-// состояний иконки тоже должны быть разными и изменять
-// - По нажатие на имя студента - удалять имя, вместо имени показывать форму
-// ввода - по нажатию на ENTER сохранять новое имя для этого студента, удалять
-// форму ввода и выводить в списке новое имя студента
-// - По аналогии предыдущего пункта сделать тоже самое с номером курса и с
-// оценкой студента. Не забыть что при изменении оценки статистика также
-// должна быть пересчитана и выведена новая статистика.
+// Урок восьмой
+// - Добавить еще одно свойство для студента - email адрес
+// - Вывести mail адрес на ряду в списке студентов
+// - Так же организовать возможность изменения по аналогии с именем
+// - Написать регулярное выражение проверки введенных данных email
+// - Написать валидацию проверку ввода данных - курс это любое целое число от 1
+// до 5, email - с помощью регулярки, имя может содержать только буквы не более
+// 15 символов
+// - Если при вводе в любую из форм введены невалидные данные - сообщать об
+// этом в окне с ошибкой
+// - Изменять данные физически тогда и только тогда, когда будут введены
+// корректные
+// - Добавить еще одно свойство: date - дата создания студента, брать текущее
+// время клиента и записывать наряду с каждым студентом, выводить дату в
+// списке со студентами - ее нельзя изменить.
+// - Добавить в статистику еще одно вычисление: количество студентов которые
+// были добавлены за последний час.
+// - Все данные хранить в localStorage касательно студентов
+// - При открытии страницы выбирать из localstorage и показывать список студентов
+// и статистику соответственно
+// - Если localstorage не имеет никаких данных в себе, показывать что ничего нет
+// при добавлении из формы нового студента - данные должны попасть и
+// сохраниться в localstorage, при следующем открытии страницы - уже
+// подтянуться сохраненные данные
 
 var students = [
-    { name: 'Sergii Sirenko', estimate: 4.2, course: 1, active: false, email: 'sergiisirenko@gmail.com', date: 'Wed Dec 16 2020 09:17' },
+    { name: 'Sergii Sirenko', estimate: 4.2, course: 1, active: false, email: 'sergiisirenko@gmail.com', date: 'Wed Dec 16 2020 09:17', },
     { name: 'Mariia Zirenko', estimate: 5, course: 1, active: true, email: 'mariiazirenko@gmail.com', date: 'Wed Dec 16 2020 10:18' },
-    { name: 'Pavlo Shnurov', estimate: 4.9, course: 1, active: true, email: 'pavloshnurov@gmail.com', date: 'Wed Dec 16 2020 11:19' },
-    { name: 'Andrii Kucherenko', estimate: 3.9, course: 2, active: true, email: 'andriikucherenko@gmail.com', date: 'Wed Dec 16 2020 12:20' },
+    { name: 'Pavlo Shnurov', estimate: 4.9, course: 1, active: true, email: 'pavloshnurov@gmail.com', date: 'Wed Dec 17 2020 14:57' },
+    { name: 'Andrii Kucherenko', estimate: 3.9, course: 2, active: true, email: 'andriikucherenko@gmail.com', date: 'Wed Dec 16 2020 12:20', },
     { name: 'Maxim Kucher', estimate: 4.8, course: 2, active: true, email: 'maximkucher@gmail.com', date: 'Wed Dec 16 2020 13:21' },
     { name: 'Antonina Gureeva', estimate: 3.4, course: 3, active: false, email: 'antoninagureeva@gmail.com', date: 'Wed Dec 16 2020 14:22' },
-    { name: 'Leonid Gurchenko', estimate: 4.1, course: 3, active: true, email: 'leonidgurchenko@gmail.com', date: 'Wed Dec 16 2020 15:23' },
+    { name: 'Leonid Gurchenko', estimate: 4.1, course: 3, active: true, email: 'leonidgurchenko@gmail.com', date: 'Wed Dec 17 2020 14:53' },
     { name: 'Ivan Petrenko', estimate: 3.5, course: 4, active: false, email: 'ivanpetrenko@gmail.com', date: 'Wed Dec 16 2020 16:24' },
     { name: 'Regina Petrenko', estimate: 2.8, course: 4, active: false, email: 'reginapetrenko@gmail.com', date: 'Wed Dec 16 2020 17:25' }
 ];
@@ -36,6 +42,7 @@ var summActiveStudents = 0;
 var summInactiveStudents = 0;
 var summInactiveStudentsInCourses = {};
 var averageStudentsEstimateInCourse = {};
+var listStudentsAddedLastHour = [];
 
 function clear() {
     studentEstimatesSumm = 0;
@@ -152,7 +159,7 @@ function isValidCourse(course) {
 }
 
 function isValidName(name) {
-    let result = /^[a-zA-Z]{1,15}\s[a-zA-Z]{1,15}$/.test(name);
+    let result = /^[a-zA-Z]{1,15}(\s){0,1}[a-zA-Z]{1,15}$/.test(name);
     console.log(result);
     return result;
 }
@@ -182,7 +189,7 @@ function addTableAverageEstimate() {
         table.appendChild(tr);
         tr.appendChild(td);
     }
-    let list = document.querySelector('.courseAverage');
+    let list = document.querySelector('.tableAverageEstimate');
     list.innerHTML = '';
     list.appendChild(table);
 }
@@ -201,19 +208,25 @@ function addTableInActiveStudents() {
         table.appendChild(tr);
         tr.appendChild(td);
     }
-    let list = document.querySelector('.courseInActiveStudents');
+    let list = document.querySelector('.tableInActiveStudents');
     list.innerHTML = '';
     list.appendChild(table);
 }
 
-function addPhraseAllInactiveStudents() {
-    const p = document.createElement('p');
+function addTableQuantityStudentsLastHour() {
+    let list = document.querySelector('.tableQuantityStudentsLastHour');
+    let recentStudents = 0;
+    for (let i = 0; i < students.length; i++) {
+        const student = students[i];
+        if (student.dateForCalculation) {
+            const prevHour = new Date().setHours(new Date().getHours() - 1)
+            const isRecent = student.dateForCalculation > prevHour;
+            if (isRecent)
+                recentStudents++;
+        }
+    }
 
-    p.setAttribute('class', 'phrase');
-
-    p.innerHTML = 'Общее количество неактивных студентов: ' + JSON.stringify(summInactiveStudents);
-
-    document.querySelector('body').appendChild(p);
+    list.innerHTML = `Количество студентов, добавленных за последний час - ${recentStudents}`;
 }
 
 function renderStudents() {
@@ -277,6 +290,7 @@ function renderStudents() {
             iconCross.addEventListener('click', function (event) {
                 students.splice(i, 1);
                 renderStudents();
+                addTableQuantityStudentsLastHour();
 
                 clear();
 
@@ -285,6 +299,7 @@ function renderStudents() {
 
                 addTableAverageEstimate();
                 addTableInActiveStudents();
+                setLocalStorage();
 
                 let checkStudents = document.getElementsByTagName('td').length;
                 if (checkStudents === 0) {
@@ -315,6 +330,7 @@ function renderStudents() {
 
                 addTableAverageEstimate();
                 addTableInActiveStudents();
+                setLocalStorage();
             });
         })(i);
 
@@ -347,6 +363,7 @@ function renderStudents() {
                                 renderStudents();
                                 addTableAverageEstimate();
                                 addTableInActiveStudents();
+                                setLocalStorage();
                             } else {
                                 name.innerHTML = 'Введите имя и фамилию латинскими буквами через пробел';
                             }
@@ -383,6 +400,7 @@ function renderStudents() {
                             renderStudents();
                             addTableAverageEstimate();
                             addTableInActiveStudents();
+                            setLocalStorage();
                         }
                     });
                 })(i);
@@ -418,6 +436,7 @@ function renderStudents() {
                                 renderStudents();
                                 addTableAverageEstimate();
                                 addTableInActiveStudents();
+                                setLocalStorage();
                             } else {
                                 course.innerHTML = 'Введите число от 1 до 5';
                             }
@@ -457,6 +476,7 @@ function renderStudents() {
                                 renderStudents();
                                 addTableAverageEstimate();
                                 addTableInActiveStudents();
+                                setLocalStorage();
                             } else {
                                 email.innerHTML = 'Неверный формат e-mail';
                             }
@@ -562,12 +582,14 @@ function addedNewStudents() {
             let newStudent = {
                 name: inputValueName, estimate: parseInt(inputValueEstimate),
                 course: parseInt(inputValueCourse), active: checkedCheckbox,
-                email: '', date: new Date()
+                email: 'Введите e-mail',
+                date: new Date().toDateString() + ' ' + new Date().getHours() + ':' + new Date().getMinutes(),
+                dateForCalculation: new Date()
             };
 
-            students.push(newStudent);
+            console.log(newStudent.dateForCalculation);
 
-            console.log(students);
+            students.push(newStudent);
 
             clear();
 
@@ -575,11 +597,13 @@ function addedNewStudents() {
             calculateAverageStudentsEstimateInCourse();
 
             renderStudents();
+            addTableQuantityStudentsLastHour();
             addTableAverageEstimate();
             addTableInActiveStudents();
+            setLocalStorage();
         } else {
             if (!resultValidationName) {
-                alert('Введите имя и фамилию латинскими буквами через пробел');
+                alert('Введите имя и фамилию латинскими буквами');
             }
 
             if (!resultValidationCourse) {
@@ -593,10 +617,29 @@ function addedNewStudents() {
     });
 }
 
+function setLocalStorage() {
+    localStorage.setItem('students', JSON.stringify(students));
+}
+
+function getLocalStorage() {
+    let studentsInLocalStorage = localStorage.getItem('students');
+    if (studentsInLocalStorage) {
+        students = JSON.parse(studentsInLocalStorage);
+        for (var i = 0; i < students.length; i++) {
+            students[i].dateForCalculation = new Date(students[i].dateForCalculation)
+        }
+    } else {
+        alert('LocalStorage пуст')
+    }
+
+}
+
 window.onload = function () {
+    getLocalStorage();
     renderStudents();
     addInputs();
     addedNewStudents();
     addTableAverageEstimate();
     addTableInActiveStudents();
+    addTableQuantityStudentsLastHour();
 };
