@@ -287,7 +287,7 @@ function renderStudents() {
         }
 
         (function (i) {
-            iconCross.addEventListener('click', function (event) {
+            iconCross.addEventListener('click', async function (event) {
                 students.splice(i, 1);
                 renderStudents();
                 addTableQuantityStudentsLastHour();
@@ -299,7 +299,7 @@ function renderStudents() {
 
                 addTableAverageEstimate();
                 addTableInActiveStudents();
-                setLocalStorage();
+                await setLocalStorage();
 
                 let checkStudents = document.getElementsByTagName('td').length;
                 if (checkStudents === 0) {
@@ -313,7 +313,7 @@ function renderStudents() {
         })(i);
 
         (function (i) {
-            iconPlus.addEventListener('click', function (event) {
+            iconPlus.addEventListener('click',async function (event) {
 
                 if (students[i].active) {
                     students[i].active = false;
@@ -330,7 +330,7 @@ function renderStudents() {
 
                 addTableAverageEstimate();
                 addTableInActiveStudents();
-                setLocalStorage();
+                await setLocalStorage();
             });
         })(i);
 
@@ -345,7 +345,7 @@ function renderStudents() {
                 inputName.setAttribute('id', 'inputName');
 
                 (function (i) {
-                    inputName.addEventListener('keyup', function (event) {
+                    inputName.addEventListener('keyup', async function (event) {
                         if (event.keyCode === 13) {
                             let newName = document.getElementsByTagName('input')[0].value;
                             students[i].name = newName;
@@ -363,7 +363,7 @@ function renderStudents() {
                                 renderStudents();
                                 addTableAverageEstimate();
                                 addTableInActiveStudents();
-                                setLocalStorage();
+                                await setLocalStorage();
                             } else {
                                 name.innerHTML = 'Введите имя и фамилию латинскими буквами через пробел';
                             }
@@ -386,7 +386,7 @@ function renderStudents() {
                 inputName.setAttribute('id', 'inputName');
 
                 (function (i) {
-                    inputName.addEventListener('keyup', function (event) {
+                    inputName.addEventListener('keyup', async function (event) {
                         if (event.keyCode === 13) {
                             let newName = document.getElementsByTagName('input')[0].value;
                             students[i].estimate = parseInt(newName);
@@ -400,7 +400,7 @@ function renderStudents() {
                             renderStudents();
                             addTableAverageEstimate();
                             addTableInActiveStudents();
-                            setLocalStorage();
+                            await setLocalStorage();
                         }
                     });
                 })(i);
@@ -418,7 +418,7 @@ function renderStudents() {
                 inputCourse.setAttribute('id', 'inputCourse');
 
                 (function (i) {
-                    inputCourse.addEventListener('keyup', function (event) {
+                    inputCourse.addEventListener('keyup', async function (event) {
                         if (event.keyCode === 13) {
                             let newCourse = document.getElementsByTagName('input')[0].value;
                             students[i].course = parseInt(newCourse);
@@ -436,7 +436,7 @@ function renderStudents() {
                                 renderStudents();
                                 addTableAverageEstimate();
                                 addTableInActiveStudents();
-                                setLocalStorage();
+                                await setLocalStorage();
                             } else {
                                 course.innerHTML = 'Введите число от 1 до 5';
                             }
@@ -459,7 +459,7 @@ function renderStudents() {
                 inputEmail.setAttribute('id', 'inputEmail');
 
                 (function (i) {
-                    inputEmail.addEventListener('keyup', function (event) {
+                    inputEmail.addEventListener('keyup',async function (event) {
                         if (event.keyCode === 13) {
                             let newEmail = document.getElementsByTagName('input')[0].value;
                             students[i].email = newEmail;
@@ -476,7 +476,7 @@ function renderStudents() {
                                 renderStudents();
                                 addTableAverageEstimate();
                                 addTableInActiveStudents();
-                                setLocalStorage();
+                                await setLocalStorage();
                             } else {
                                 email.innerHTML = 'Неверный формат e-mail';
                             }
@@ -559,10 +559,10 @@ function addInputs() {
     form.appendChild(inputButton);
 }
 
-function addedNewStudents() {
+async function addedNewStudents() {
     let button = document.querySelector('.button');
 
-    button.addEventListener('click', event => {
+    button.addEventListener('click', async event => {
 
         let inputValueName = document.getElementsByTagName('input')[0].value;
 
@@ -600,7 +600,7 @@ function addedNewStudents() {
             addTableQuantityStudentsLastHour();
             addTableAverageEstimate();
             addTableInActiveStudents();
-            setLocalStorage();
+            await setLocalStorage();
         } else {
             if (!resultValidationName) {
                 alert('Введите имя и фамилию латинскими буквами');
@@ -617,28 +617,23 @@ function addedNewStudents() {
     });
 }
 
-function setLocalStorage() {
-    localStorage.setItem('students', JSON.stringify(students));
+async function setLocalStorage() {
+    await setStudents(JSON.stringify(students))
 }
 
-function getLocalStorage() {
-    let studentsInLocalStorage = localStorage.getItem('students');
-    if (studentsInLocalStorage) {
-        students = JSON.parse(studentsInLocalStorage);
-        for (var i = 0; i < students.length; i++) {
-            students[i].dateForCalculation = new Date(students[i].dateForCalculation)
-        }
-    } else {
-        alert('LocalStorage пуст')
+async function getLocalStorage() {
+    let studentsFromServer = await getStudents();
+    students = JSON.parse(studentsFromServer);
+    for (var i = 0; i < students.length; i++) {
+        students[i].dateForCalculation = new Date(students[i].dateForCalculation)
     }
-
 }
 
-window.onload = function () {
-    getLocalStorage();
+window.onload = async function () {
+    await getLocalStorage();
     renderStudents();
     addInputs();
-    addedNewStudents();
+    await addedNewStudents();
     addTableAverageEstimate();
     addTableInActiveStudents();
     addTableQuantityStudentsLastHour();
